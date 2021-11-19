@@ -20,7 +20,7 @@ using Eigen::Matrix;
 using Eigen::PartialPivLU;
 using namespace Eigen;
 
-
+#if 0
 //Runge-Kutta Method 
 uint8_t rk4(uint8_t (*func)(float t, 
                             Matrix<float, 7, 1> x, 
@@ -68,7 +68,7 @@ uint8_t H_jacobian( Matrix<float, 6, 7> &H,
                     float mn, 
                     float md);
 
-
+#endif
 //Extended Kalman Filter
 uint8_t ekf( Matrix<float, 7, 1> &xe,
              Matrix<float, 7, 1> &xp,

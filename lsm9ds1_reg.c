@@ -58,8 +58,8 @@ int32_t platform_write_imu(void *handle, uint8_t reg,
   //HAL_GPIO_WritePin(sensbus->cs_port, sensbus->cs_pin, GPIO_PIN_SET);
 
   cs_select(sensbus->cs_pin);
-  spi_write_blocking(/*sensbus->hbus*/spi0, &reg, 1);
-  spi_write_blocking(/*sensbus->hbus*/spi0, (uint8_t*) bufp, len);
+  spi_write_blocking(/*sensbus->hbus*/spi1, &reg, 1);
+  spi_write_blocking(/*sensbus->hbus*/spi1, (uint8_t*) bufp, len);
   cs_deselect(sensbus->cs_pin);
   return 0;
 
@@ -90,8 +90,8 @@ int32_t platform_write_mag(void *handle, uint8_t reg,
   //return 0;
 
   cs_select(sensbus->cs_pin);
-  spi_write_blocking(/*sensbus->hbus*/spi0, &reg, 1);
-  spi_write_blocking(/*sensbus->hbus*/spi0, (uint8_t*) bufp, len);
+  spi_write_blocking(/*sensbus->hbus*/spi1, &reg, 1);
+  spi_write_blocking(/*sensbus->hbus*/spi1, (uint8_t*) bufp, len);
   cs_deselect(sensbus->cs_pin);
   return 0;
 }
@@ -121,8 +121,8 @@ int32_t platform_read_imu(void *handle, uint8_t reg,
 
   reg |= 0x80;
   cs_select(sensbus->cs_pin);
-  spi_write_blocking(/*sensbus->hbus*/spi0, &reg, 1);
-  spi_read_blocking(/*sensbus->hbus*/spi0, 0, bufp, len);
+  spi_write_blocking(/*sensbus->hbus*/spi1, &reg, 1);
+  spi_read_blocking(/*sensbus->hbus*/spi1, 0, bufp, len);
   cs_deselect(sensbus->cs_pin);
   return 0;
 
@@ -153,8 +153,8 @@ int32_t platform_read_mag(void *handle, uint8_t reg,
 
   reg |= 0xC0;
   cs_select(sensbus->cs_pin);
-  spi_write_blocking(/*sensbus->hbus*/spi0, &reg, 1);
-  spi_read_blocking(/*sensbus->hbus*/spi0, 0, bufp, len);
+  spi_write_blocking(/*sensbus->hbus*/spi1, &reg, 1);
+  spi_read_blocking(/*sensbus->hbus*/spi1, 0, bufp, len);
   cs_deselect(sensbus->cs_pin);
   return 0;
 
@@ -212,7 +212,7 @@ void platform_init( sensbus_t *imu_bus,
   dev_ctx_mag->write_reg = platform_write_mag;
   dev_ctx_mag->read_reg = platform_read_mag;
   dev_ctx_mag->handle = (void *)mag_bus;
-  // This example will use SPI0 or SPI1 at 0.5MHz.
+  // This example will use spi1 or SPI1 at 0.5MHz.
   spi_init(imu_bus->hbus, freq);
   spi_init(mag_bus->hbus, freq);
   gpio_set_function(pin_miso, GPIO_FUNC_SPI);

@@ -16,8 +16,17 @@ add_executable(pico_copter
   sensor.cpp
   ekf.cpp
   lsm9ds1_reg.c
+  pwm.cpp
+  radio.cpp
+  control.cpp
 )
-target_link_libraries(pico_copter hardware_spi pico_stdlib)
+
+target_link_libraries(pico_copter 
+  hardware_spi 
+  hardware_pwm 
+  hardware_uart 
+  pico_stdlib
+  pico_multicore)
 
 pico_enable_stdio_usb(pico_copter 1)
 pico_enable_stdio_uart(pico_copter 0)

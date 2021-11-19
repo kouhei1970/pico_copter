@@ -1,10 +1,3 @@
-/* Includes ------------------------------------------------------------------*/
-//#include <string.h>
-//#include <stdio.h>
-//#include "pico/stdlib.h"
-//#include "pico/binary_info.h"
-//#include "hardware/spi.h"
-//#include "lsm9ds1_reg.h"
 #include "sensor.hpp"
 
 int16_t data_raw_acceleration[3];
@@ -18,21 +11,17 @@ lsm9ds1_status_t reg;
 uint8_t rst;
 uint8_t tx_buffer_imu[1000];
 uint8_t tx_buffer_mag[1000];
-sensbus_t Ins_bus={spi0, PIN_CSAG};
-sensbus_t Mag_bus={spi0, PIN_CSM};
+sensbus_t Ins_bus={spi1, PIN_CSAG};
+sensbus_t Mag_bus={spi1, PIN_CSM};
 stmdev_ctx_t Imu_h;
 stmdev_ctx_t Mag_h;
 
-//#define PIN_CSAG  1
-//#define PIN_MISO  4
-//#define PIN_CSM   5
-//#define PIN_SCK   6
-//#define PIN_MOSI  7
+//ローカル関数宣言
+void printData(void);
 
 
 void imu_mag_init(void)
 {
-
   /* Initialize platform specific hardware */
   platform_init(  &Ins_bus,/* INS spi bus & cs pin */
                   &Mag_bus,/* MAG spi bus & cs pin */ 
@@ -131,7 +120,19 @@ void imu_mag_data_read(void)
     magnetic_field_mgauss[2] = lsm9ds1_from_fs16gauss_to_mG(
                                  data_raw_magnetic_field[2]);
   }
+  //printData();
 }
+
+void printData(void)
+{
+    printf("%13.8f\t%13.8f\t%13.8f\t%13.8f\t%13.8f\t%13.8f\t",
+            acceleration_mg[0], acceleration_mg[1], acceleration_mg[2],
+            angular_rate_mdps[0], angular_rate_mdps[1], angular_rate_mdps[2]);
+    printf("%13.8f\t%13.8f\t%13.8f\r\n",
+            magnetic_field_mgauss[0], magnetic_field_mgauss[1],
+            magnetic_field_mgauss[2]);
+}  
+
 
 #if 0
 int main(void)
@@ -143,10 +144,10 @@ int main(void)
   {
     imu_mag_data_read();
     printf((char *)tx_buffer_imu,
-            "IMU-[mg]:\t%4.2f\t%4.2f\t%4.2f\t[mdps]:\t%4.2f\t%4.2f\t%4.2f\t",
+            "IMU-[mg]:\t%13.8f\t%13.8f\t%13.8f\t[mdps]:\t%13.8f\t%13.8f\t%13.8f\t",
             acceleration_mg[0], acceleration_mg[1], acceleration_mg[2],
             angular_rate_mdps[0], angular_rate_mdps[1], angular_rate_mdps[2]);
-    printf((char *)tx_buffer_mag, "MAG-[mG]:\t%4.2f\t%4.2f\t%4.2f\r\n",
+    printf((char *)tx_buffer_mag, "MAG-[mG]:\t%13.8f\t%13.8f\t%13.8f\r\n",
             magnetic_field_mgauss[0], magnetic_field_mgauss[1],
             magnetic_field_mgauss[2]);
     sleep_ms(10);
