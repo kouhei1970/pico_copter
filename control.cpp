@@ -418,6 +418,7 @@ void angle_control(void)
     {
       Elapsed_time=Elapsed_time+0.01;
       output_data();
+      //output_sensor_raw_data();
     }
     else
     {
@@ -524,7 +525,7 @@ void gyroCalibration(void)
 
 void sensor_read(void)
 {
-  float mx1,my1,mz1;
+  float mx1,my1,mz1,mag_norm;
 
   imu_mag_data_read();
   Ax =-acceleration_mg[0]*GRAV*0.001;
@@ -581,7 +582,10 @@ const float zoom[3]={0.003077277151877191, 0.0031893151610213463, 0.003383279497
   Mx = rot[0]*mx1 +rot[3]*my1 +rot[6]*mz1;
   My = rot[1]*mx1 +rot[4]*my1 +rot[7]*mz1;
   Mz = rot[2]*mx1 +rot[5]*my1 +rot[8]*mz1; 
-//  mag_norm=sqrt(mx*mx +my*my +mz*mz);
+  mag_norm=sqrt(Mx*Mx +My*My +Mz*Mz);
+  Mx/=mag_norm;
+  My/=mag_norm;
+  Mz/=mag_norm;
 }
 
 void variable_init(void)
@@ -701,7 +705,7 @@ void output_sensor_raw_data(void)
             ,Elapsed_time//1
             ,Ax, Ay, Az//2~4
             ,Wp, Wq, Wr//5~7
-            ,Mx0, My0, Mz0//8~10
+            ,Mx, My, Mz//8~10
         ); //20
 }
 

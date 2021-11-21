@@ -10,8 +10,8 @@
 #include <math.h>
 
 #define GRAV (9.80665)
-#define MN (0.554263)
-#define MD (0.927501)
+#define MN (-0.04333)
+#define MD  (0.99906)
 #define PI (M_PI)
 
 using Eigen::MatrixXd;
