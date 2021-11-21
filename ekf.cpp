@@ -289,7 +289,8 @@ uint8_t ekf( Matrix<float, 7, 1> &xe,
   //Matrix<float, 6, 6> I6=MatrixXf::Identity(6,6);
   Matrix<float, 7, 6> K;
   Matrix<float, 6, 1> zbar;
-  
+  float mag;
+
   //Update
   H_jacobian(H, xp, GRAV, MN, MD);
   Den = H * P * H.transpose() + R;
@@ -305,113 +306,17 @@ uint8_t ekf( Matrix<float, 7, 1> &xe,
   F_jacobian(F, xe, omega, beta, dt);
   P = F*P*F.transpose() + G*Q*G.transpose();
 
+  mag=sqrt(xe(0,0)*xe(0,0) + xe(1,0)*xe(1,0) + xe(2,0)*xe(2,0) + xe(3,0)*xe(3,0));
+  xe(0,0)/=mag;
+  xe(1,0)/=mag;
+  xe(2,0)/=mag;
+  xe(3,0)/=mag;
+  mag=sqrt(xp(0,0)*xp(0,0) + xp(1,0)*xp(1,0) + xp(2,0)*xp(2,0) + xp(3,0)*xp(3,0));
+  xp(0,0)/=mag;
+  xp(1,0)/=mag;
+  xp(2,0)/=mag;
+  xp(3,0)/=mag;
+
+
   return 0;
 }
-
-#if 0
-int main(void)
-{
-  Matrix<float, 7 ,1> xp = MatrixXf::Zero(7,1);
-  Matrix<float, 7 ,1> xe = MatrixXf::Zero(7,1);
-  Matrix<float, 7 ,1> x_sim = MatrixXf::Zero(7,1);
-  Matrix<float, 7 ,7> P = MatrixXf::Identity(7,7);
-  Matrix<float, 6 ,1> z = MatrixXf::Zero(6,1);
-  Matrix<float, 6 ,1> z_sim = MatrixXf::Zero(6,1);
-  Matrix<float, 6 ,1> z_noise = MatrixXf::Zero(6,1);
-  Matrix<float, 3, 1> omega_m = MatrixXf::Zero(3, 1);
-  Matrix<float, 3, 1> omega_sim;
-  Matrix<float, 3, 1> domega;
-  Matrix<float, 3, 1> domega_sim;
-  Matrix<float, 3, 3> Q = MatrixXf::Identity(3, 3)*1;
-  Matrix<float, 6, 6> R = MatrixXf::Identity(6, 6)*1;
-  Matrix<float, 7 ,3> G;
-  Matrix<float, 3 ,1> beta;
-  float t=0.0,dt=0.0025;
-  uint64_t s_time=0,e_time=0;
-  short i,waittime=15;
-  float p_com[10]={0.1*PI, 0, 0.01*PI, 0, -0.01*PI, 0, 0.02*PI, 0, -0.05*PI, 0};
-  float q_com[10]={0.1*PI, 0, 0      , 0, -0.01*PI, 0, 0.02*PI, 0, -0.02*PI, 0};
-  float r_com[10]={0.1*PI, 0,-0.02*PI, 0,      -PI, 0, 0.02*PI, 0,  0.02*PI, 0};
-  float endtime=1000.0;
-  float control_period=5.0;
-  float control_time=5.0;
-  int counter=0;
-  int sample=1;
-  int control_counter=0;
-  int control_counter_max=0;
-
-  //Variable Initalize
-  xe << 1.0, 0.0, 0.0, 0.0, 0.011, 0.021, 0.031;
-  xp =xe;
-  x_sim << 1.0, 0.0, 0.0, 0.0, 0.01, 0.02, 0.03;
-  observation_equation(x_sim, z_sim, GRAV, MN, MD);
-  G <<  0.0,0.0,0.0, 
-        0.0,0.0,0.0, 
-        0.0,0.0,0.0, 
-        0.0,0.0,0.0, 
-        1.0,0.0,0.0, 
-        0.0,1.0,0.0, 
-        0.0,0.0,1.0;
-  beta << 0.003, 0.003, 0.003;
-  P <<  1,0,0,0,0,0,0,  
-        0,1,0,0,0,0,0,
-        0,0,1,0,0,0,0,  
-        0,0,0,1,0,0,0, 
-        0,0,0,0,1,0,0,  
-        0,0,0,0,0,1,0,  
-        0,0,0,0,0,0,1;
-  
-  //Initilize Console Input&Output
-  stdio_init_all();  
-
-#if 1
-  //Start up wait for Pico
-  for (i=0;i<waittime;i++)
-  {
-    printf("#Please wait %d[s] ! Random number test:%f\n",waittime-i, norm(mt) );
-    sleep_ms(1000);
-  }
-  printf("#Start Kalman Filter\n");
-#endif
-
-  //Main Loop 
-  while(t<endtime)
-  {
-    //Control
-    if(t>control_time)
-    {
-      control_time = control_time + control_period;
-      control_counter++;
-      if(control_counter>control_counter_max)control_counter=0;
-    }
-    omega_sim<< p_com[control_counter], q_com[control_counter], r_com[control_counter];
-    domega_sim << x_sim(4,0), x_sim(5,0), x_sim(6,0);
-    omega_m = omega_sim + domega_sim;
-
-    //--Begin Extended Kalman Filter--
-    observation_equation(x_sim, z, GRAV, MN, MD);
-    z_noise << norm(mt),norm(mt),norm(mt),norm(mt),norm(mt),norm(mt);
-    //s_time=time_us_64();
-    ekf(xp, xe, P, z+z_noise, omega_m, Q, R, G*dt, beta, dt);
-    //e_time=time_us_64();
-    //--End   Extended Kalman Filter--
-
-    //Result output
-    if(counter%sample==0)
-    {
-      printf("%9.6f %9.6f %9.6f %9.6f %9.6f %9.6f %9.6f %9.6f %9.6f %9.6f %9.6f %9.6f %9.6f %9.6f %9.6f %9.6f %9.6f %9.6f %llu\n",
-                t, 
-                xe(0,0), xe(1,0), xe(2,0),xe(3,0), xe(4,0), xe(5,0),xe(6,0),
-                x_sim(0,0), x_sim(1,0), x_sim(2,0), x_sim(3,0), x_sim(4,0), x_sim(5,0), x_sim(6,0),
-                p_com[control_counter], q_com[control_counter], r_com[control_counter],
-                e_time-s_time);  
-    }
-    counter++;
-    
-    //Simulation
-    rk4(xdot, t, dt, x_sim, omega_sim, beta);
-    t=t+dt;
-  }
-  return 0;
-}
-#endif

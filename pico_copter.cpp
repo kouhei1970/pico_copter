@@ -6,7 +6,7 @@ semaphore_t sem;
 
 int main(void)
 {
-  int start_wait=10;
+  int start_wait=5;
   //const uint LED_PIN = 25;
   gpio_init(LED_PIN);
   gpio_set_dir(LED_PIN, GPIO_OUT);

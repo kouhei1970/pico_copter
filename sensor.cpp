@@ -68,14 +68,14 @@ void imu_mag_init(void)
   /* Configure filtering chain - See datasheet for filtering chain details */
 
   /* Accelerometer filtering chain */
-  lsm9ds1_xl_filter_aalias_bandwidth_set(&Imu_h, LSM9DS1_AUTO);
-  lsm9ds1_xl_filter_lp_bandwidth_set(&Imu_h, LSM9DS1_LP_ODR_DIV_50);
-  lsm9ds1_xl_filter_out_path_set(&Imu_h, LSM9DS1_LP_OUT);
+  //lsm9ds1_xl_filter_aalias_bandwidth_set(&Imu_h, LSM9DS1_AUTO);
+  //lsm9ds1_xl_filter_lp_bandwidth_set(&Imu_h, LSM9DS1_LP_ODR_DIV_50);
+  //lsm9ds1_xl_filter_out_path_set(&Imu_h, LSM9DS1_LP_OUT);
 
   /* Gyroscope filtering chain */
-  lsm9ds1_gy_filter_lp_bandwidth_set(&Imu_h, LSM9DS1_LP_ULTRA_LIGHT);
-  lsm9ds1_gy_filter_hp_bandwidth_set(&Imu_h, LSM9DS1_HP_MEDIUM);
-  lsm9ds1_gy_filter_out_path_set(&Imu_h, LSM9DS1_LPF1_HPF_LPF2_OUT);
+  //lsm9ds1_gy_filter_lp_bandwidth_set(&Imu_h, LSM9DS1_LP_ULTRA_LIGHT);
+  //lsm9ds1_gy_filter_hp_bandwidth_set(&Imu_h, LSM9DS1_HP_ULTRA_LIGHT);
+  //lsm9ds1_gy_filter_out_path_set(&Imu_h, LSM9DS1_LPF1_HPF_LPF2_OUT);
 
   /* Set Output Data Rate / Power mode */
   lsm9ds1_imu_data_rate_set(&Imu_h, LSM9DS1_IMU_476Hz);

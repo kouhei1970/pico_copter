@@ -28,8 +28,8 @@ uint8_t Logflag=0;
 volatile uint8_t Logoutputflag=0;
 float Log_time=0.0;
 uint16_t LedBlinkCounter=0;
-const uint8_t DATANUM=4;
-const uint16_t LOGDATANUM=48000;
+const uint8_t DATANUM=10;
+const uint32_t LOGDATANUM=48000;
 float Logdata[LOGDATANUM]={0.0};
 uint8_t LockMode=0;
 
@@ -106,6 +106,12 @@ void loop_400Hz(void)
       Pbias=Pbias/BiasCounter;
       Qbias=Qbias/BiasCounter;
       Rbias=Rbias/BiasCounter;
+      Xe(4,0)=Pbias;
+      Xe(5,0)=Qbias;
+      Xe(6,0)=Rbias;
+      Xp(4,0)=Pbias;
+      Xp(5,0)=Qbias;
+      Xp(6,0)=Rbias;
       Phi_bias=Phi_bias/BiasCounter;
       Theta_bias=Theta_bias/BiasCounter;
       Psi_bias=Psi_bias/BiasCounter;
@@ -406,10 +412,19 @@ void angle_control(void)
       psi_pid.reset();
     }
 
-    //Elapsed_time=Elapsed_time+0.01;
     E_time2=time_us_32();
     D_time2=E_time2-S_time2;
-    //output_data();
+    if(Arm_flag==2)
+    {
+      Elapsed_time=Elapsed_time+0.01;
+      output_data();
+    }
+    else
+    {
+      Elapsed_time=0.0;
+    }
+
+
     //Pref=0.0;
     //Qref=0.0;
     //Rref=0.0;
@@ -432,10 +447,13 @@ void logging(void)
       Logdata[LogdataCounter++]=Xe(1,0);
       Logdata[LogdataCounter++]=Xe(2,0);
       Logdata[LogdataCounter++]=Xe(3,0);
-      /*
       Logdata[LogdataCounter++]=Wp;
       Logdata[LogdataCounter++]=Wq;
       Logdata[LogdataCounter++]=Wr;
+      Logdata[LogdataCounter++]=Ax;
+      Logdata[LogdataCounter++]=Ay;
+      Logdata[LogdataCounter++]=Az;
+      /*
       Logdata[LogdataCounter++]=Pref;
       Logdata[LogdataCounter++]=Qref;
       Logdata[LogdataCounter++]=Rref;
@@ -569,16 +587,16 @@ const float zoom[3]={0.003077277151877191, 0.0031893151610213463, 0.003383279497
 void variable_init(void)
 {
   //Variable Initalize
-  Xe << 1.00, 0.0, 0.0, 0.0,-6.1e-4,-6.1e-4, 6.1e-4;
+  Xe << 1.00, 0.0, 0.0, 0.0,0.0,0.0, 0.0;
   Xp =Xe;
 /*
   Q <<  8.86e-6  , 0.0    , 0.0,
         0.0    , 9.9e-6   , 0.0,
         0.0,     0.0    ,   5.38e-6;
 */
-  Q <<  1.0e-6 , 0.0    , 0.0,
-        0.0   , 1.0e-6  , 0.0,
-        0.0   , 0.0    , 1.0e-6;
+  Q <<  1.0e-1 , 0.0    , 0.0,
+        0.0   , 1.0e-1  , 0.0,
+        0.0   , 0.0    , 1.0e-10;
 /*
   R <<  8.17e-6, 0.0    , 0.0    , 0.0, 0.0, 0.0,
         0.0    , 6.25e-6, 0.0    , 0.0, 0.0, 0.0,
@@ -588,12 +606,12 @@ void variable_init(void)
         0.0    , 0.0    , 0.0    , 0.0    , 0.0    , 3.29e-4;
 */
 
-  R <<  1e-4   , 0.0     , 0.0    , 0.0   , 0.0   , 0.0,
-        0.0    , 1e-4    , 0.0    , 0.0   , 0.0   , 0.0,
-        0.0    , 0.0    , 1e-4    , 0.0   , 0.0   , 0.0,
-        0.0    , 0.0    , 0.0    , 1.0e-5, 0.0   , 0.0,
-        0.0    , 0.0    , 0.0    , 0.0   , 1.0e-5, 0.0,
-        0.0    , 0.0    , 0.0    , 0.0   , 0.0   , 1.0e-5;
+  R <<  10.0e-5   , 0.0     , 0.0    , 0.0   , 0.0   , 0.0,
+        0.0    , 7.5e-5    , 0.0    , 0.0   , 0.0   , 0.0,
+        0.0    , 0.0    , 11.7e-5    , 0.0   , 0.0   , 0.0,
+        0.0    , 0.0    , 0.0    , 18.4e-3, 0.0   , 0.0,
+        0.0    , 0.0    , 0.0    , 0.0   , 21.5e-3, 0.0,
+        0.0    , 0.0    , 0.0    , 0.0   , 0.0   , 45.5e-3;
           
   G <<  0.0,0.0,0.0, 
         0.0,0.0,0.0, 
