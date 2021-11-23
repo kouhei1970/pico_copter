@@ -326,14 +326,14 @@ void rate_control(void)
   //Duty set
   if(Chdata[2]>CH3MIN*1.07)
   {
-    //set_duty_fr(fr_duty);
-    //set_duty_fl(fl_duty);
-    //set_duty_rr(rr_duty);
-    //set_duty_rl(rl_duty);
-    set_duty_fr(0.0);
-    set_duty_fl(0.0);
-    set_duty_rr(0.0);
-    set_duty_rl(0.0);
+    set_duty_fr(fr_duty);
+    set_duty_fl(fl_duty);
+    set_duty_rr(rr_duty);
+    set_duty_rl(rl_duty);
+    //set_duty_fr(0.0);
+    //set_duty_fl(0.0);
+    //set_duty_rr(0.0);
+    //set_duty_rl(0.0);
   }
   else
   {
@@ -400,7 +400,7 @@ void angle_control(void)
     {
       Pref = phi_pid.update(phi_err);
       Qref = theta_pid.update(theta_err);
-      Rref = psi_pid.update(psi_err);
+      Rref = Psi_ref;//psi_pid.update(psi_err);//Yawは角度制御しない
     }
     else
     {
@@ -414,16 +414,19 @@ void angle_control(void)
 
     E_time2=time_us_32();
     D_time2=E_time2-S_time2;
+
+#if 0
     if(Arm_flag==2)
     {
-      Elapsed_time=Elapsed_time+0.01;
-      output_data();
+      //Elapsed_time=Elapsed_time+0.01;
+      //output_data();
       //output_sensor_raw_data();
     }
     else
     {
       Elapsed_time=0.0;
     }
+#endif
 
 
     //Pref=0.0;
