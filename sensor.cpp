@@ -61,21 +61,21 @@ void imu_mag_init(void)
   lsm9ds1_block_data_update_set(&Mag_h, &Imu_h,
                                 PROPERTY_ENABLE);
   /* Set full scale */
-  lsm9ds1_xl_full_scale_set(&Imu_h, LSM9DS1_4g);
+  lsm9ds1_xl_full_scale_set(&Imu_h, LSM9DS1_16g);
   lsm9ds1_gy_full_scale_set(&Imu_h, LSM9DS1_2000dps);
   lsm9ds1_mag_full_scale_set(&Mag_h, LSM9DS1_16Ga);
 
   /* Configure filtering chain - See datasheet for filtering chain details */
 
   /* Accelerometer filtering chain */
-  //lsm9ds1_xl_filter_aalias_bandwidth_set(&Imu_h, LSM9DS1_AUTO);
-  //lsm9ds1_xl_filter_lp_bandwidth_set(&Imu_h, LSM9DS1_LP_ODR_DIV_50);
-  //lsm9ds1_xl_filter_out_path_set(&Imu_h, LSM9DS1_LP_OUT);
+  lsm9ds1_xl_filter_aalias_bandwidth_set(&Imu_h, LSM9DS1_50Hz);
+  lsm9ds1_xl_filter_lp_bandwidth_set(&Imu_h, LSM9DS1_LP_ODR_DIV_9);
+  lsm9ds1_xl_filter_out_path_set(&Imu_h, LSM9DS1_LP_OUT);
 
   /* Gyroscope filtering chain */
-  //lsm9ds1_gy_filter_lp_bandwidth_set(&Imu_h, LSM9DS1_LP_ULTRA_LIGHT);
+  lsm9ds1_gy_filter_lp_bandwidth_set(&Imu_h, LSM9DS1_LP_ULTRA_LIGHT);
   //lsm9ds1_gy_filter_hp_bandwidth_set(&Imu_h, LSM9DS1_HP_ULTRA_LIGHT);
-  //lsm9ds1_gy_filter_out_path_set(&Imu_h, LSM9DS1_LPF1_HPF_LPF2_OUT);
+  lsm9ds1_gy_filter_out_path_set(&Imu_h, LSM9DS1_LPF1_LPF2_OUT);
 
   /* Set Output Data Rate / Power mode */
   lsm9ds1_imu_data_rate_set(&Imu_h, LSM9DS1_IMU_476Hz);
@@ -95,11 +95,11 @@ void imu_mag_data_read(void)
                                  data_raw_acceleration);
     lsm9ds1_angular_rate_raw_get(&Imu_h,
                                  data_raw_angular_rate);
-    acceleration_mg[0] = lsm9ds1_from_fs4g_to_mg(
+    acceleration_mg[0] = lsm9ds1_from_fs16g_to_mg(
                            data_raw_acceleration[0]);
-    acceleration_mg[1] = lsm9ds1_from_fs4g_to_mg(
+    acceleration_mg[1] = lsm9ds1_from_fs16g_to_mg(
                            data_raw_acceleration[1]);
-    acceleration_mg[2] = lsm9ds1_from_fs4g_to_mg(
+    acceleration_mg[2] = lsm9ds1_from_fs16g_to_mg(
                            data_raw_acceleration[2]);
     angular_rate_mdps[0] = lsm9ds1_from_fs2000dps_to_mdps(
                              data_raw_angular_rate[0]);

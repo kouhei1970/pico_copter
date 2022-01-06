@@ -7,23 +7,29 @@ semaphore_t sem;
 int main(void)
 {
   int start_wait=5;
-  //const uint LED_PIN = 25;
+  
   gpio_init(LED_PIN);
   gpio_set_dir(LED_PIN, GPIO_OUT);
   
   //Initialize stdio for Pico
   stdio_init_all();
+  
   //Initialize LSM9DS1
   imu_mag_init();
+  
   //Initialize Radio
   radio_init();
+  
   //Initialize Variavle
   variable_init();
-  //Initialize PWM
-  ESC_calib=0;
-  pwm_init();
+  
   //Initilize Control
   control_init();
+  
+  //Initialize PWM
+  //Start 400Hz Interval
+  ESC_calib=0;
+  pwm_init();
 
   while(start_wait)
   {
@@ -33,9 +39,6 @@ int main(void)
   }
   printf("\n");
  
-  /* インターバルタイマ設定 */
-  //add_repeating_timer_us( -10000, &callback, NULL, &timer );
-
   //マルチコア関連の設定
   sem_init(&sem, 0, 1);
   multicore_launch_core1(angle_control);  

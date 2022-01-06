@@ -11,8 +11,10 @@
 #include "pico_copter.hpp"
 #include "control.hpp"
 
-#define DUTYMIN 1250
-#define DUTYMAX 2500
+//#define DUTYMIN 1250
+//#define DUTYMAX 2500
+#define DUTYMIN 1375
+#define DUTYMAX 2375
 
 //グローバル変数
 extern uint8_t ESC_calib;

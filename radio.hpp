@@ -28,7 +28,7 @@
 #define UART_RX_PIN 1
 
 //グローバル変数の宣言
-extern uint16_t Chdata[11];
+extern uint16_t Chdata[18];
 
 //グローバル関数の宣言
 void radio_init(void);
