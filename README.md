@@ -18,11 +18,11 @@ PicoとLSM9DS1との接続は以下の様にするものとします。
 
 |Pico側|LSM9DS1ボード側|備考|
 |---|---|---|
-|GPIO 13 (pin 17) SPI0 CSn|CSAG|加速度・ジャイロ選択|
 |GPIO 8 (pin 11) MISO/SPI0 RX|SDO（２ピンとも）|センサからデータ出力|
 |GPIO 9 (pin 12) SPI00 CSn|CSM|地磁気計選択|
 |GPIO 10 (pin 14) SCK/SPI0 SCK|SCL|クロック|
 |GPIO 11 (pin 15) MOSI/SPI0 TX|SDA|センサへデータ出力|
+|GPIO 13 (pin 17) SPI0 CSn|CSAG|加速度・ジャイロ選択|
 
 ### ブログ 
 関連ブログを書いています
