@@ -1,5 +1,8 @@
 # pico_copter
-Flightcontrol system for quadcopter using Raspberry Pi Pico
+[第１８回全日本学生室内飛行ロボットコンテスト](http://indoor-flight.com/)に参加したイカリングのフライトコントロール用プログラムです
+
+[Pico_copter](https://github.com/kouhei1970/pico_copter)のブランチの様な位置付けのプログラムとなります。
+
 
 ### Raspberry Pi Pico
 使用しているマイコンは安価なRaspberry Pi Picoです
