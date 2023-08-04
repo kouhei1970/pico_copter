@@ -1,3 +1,4 @@
+// comment
 #include "pico_copter.hpp"
 
 //グローバル変数
