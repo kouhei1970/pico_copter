@@ -298,7 +298,7 @@ uint8_t ekf( Matrix<float, 7, 1> &xe,
   //Matrix<float, 6, 6> I6=MatrixXf::Identity(6,6);
   Matrix<float, 7, 6> K;
   Matrix<float, 6, 1> zbar;
-  float mag;
+  volatile float mag;
 
   //Update
   H_jacobian(H, xp, GRAV, MN, ME, MD);
@@ -309,17 +309,16 @@ uint8_t ekf( Matrix<float, 7, 1> &xe,
   observation_equation(xp, zbar, GRAV, MN, ME, MD);
   xe = xp + K*(z - zbar);
   P = P - K*H*P;
-
-  //Predict
-  state_equation(xe, omega, beta, dt, xp);
-  F_jacobian(F, xe, omega, beta, dt);
-  P = F*P*F.transpose() + G*Q*G.transpose();
-
   mag=sqrt(xe(0,0)*xe(0,0) + xe(1,0)*xe(1,0) + xe(2,0)*xe(2,0) + xe(3,0)*xe(3,0));
   xe(0,0)/=mag;
   xe(1,0)/=mag;
   xe(2,0)/=mag;
   xe(3,0)/=mag;
+
+  //Predict
+  state_equation(xe, omega, beta, dt, xp);
+  F_jacobian(F, xe, omega, beta, dt);
+  P = F*P*F.transpose() + G*Q*G.transpose();
   mag=sqrt(xp(0,0)*xp(0,0) + xp(1,0)*xp(1,0) + xp(2,0)*xp(2,0) + xp(3,0)*xp(3,0));
   xp(0,0)/=mag;
   xp(1,0)/=mag;
