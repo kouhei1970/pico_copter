@@ -851,7 +851,7 @@ void kalman_filter(void)
   float dt=0.01;
   Omega_m << Wp, Wq, Wr;
   Z << Ax, Ay, Az, Mx, My, Mz;
-  ekf(Xp, Xe, P, Z, Omega_m, Q, R, G*dt, Beta, dt);
+  ekf(Xe, Xp, P, Z, Omega_m, Q, R, G*dt, Beta, dt);
 }
 
 
